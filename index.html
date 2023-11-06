@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Pizza</title>
+</head>
+
+  <style>
+    .table {
+      margin-top: 20px;
+      border: solid 1px;
+    }
+
+    .cell {
+      border: solid 1px;
+      padding: 10px;
+    }
+
+    .cellTipo {
+      border: solid 1px;
+      padding: 10px;
+      background-color: gray;
+      color: white;
+    }
+  </style>
+
+<body>
+  <h2>Calculadora de Custo de Pizza</h2>
+
+  <label for="idNome">Nome da pizza:</label><br>
+  <input type="text" id="idNome"><br>
+  <label for="idDiametro">Diâmetro da pizza (em cm):</label><br>
+  <input type="text" id="idDiametro"><br>
+  <label for="idPreco">Preço da pizza (em R$):</label><br>
+  <input type="text" id="idPreco"><br>
+  <button onclick="addPizza()">Adicionar Pizza</button>
+  <button onclick="calcular()">Calcular</button><br>
+
+  <table id="resultados" class="table">
+    <tr>
+      <th class="cellTipo">Nome</th>
+      <th class="cellTipo">Custo</th>
+      <th class="cellTipo">Diferença%</th>
+    </tr>
+  </table><br>
+
+  <output id="idOut"></output>
+
+  <script>
+    var pizzas = []
+
+    function addPizza() {
+      let nome = document.getElementById("idNome").value
+      let diametro = document.getElementById("idDiametro").value
+      let preco = document.getElementById("idPreco").value
+
+      pizzas.push({ nome: nome, diametro: parseFloat(diametro), preco: parseFloat(preco) })
+    }
+
+    function calcular() {
+      for (let i = 0; i < pizzas.length; i++) {
+        let pizza = pizzas[i]
+        let radius = pizza.diametro / 2
+        let area = Math.PI * Math.pow(radius, 2)
+        pizza.custo = pizza.preco / area
+      }
+
+      pizzas.sort(function (a, b) {
+        return a.custo - b.custo
+      })
+
+      let table = document.getElementById("resultados")
+      table.innerHTML = "<tr><th class='cellTipo'>Nome</th><th class='cellTipo'>Custo</th><th class='cellTipo'>Diferença%</th></tr>"
+
+      let menorCusto = pizzas[0].custo
+      let pizzasMenorCusto = []
+
+      for (let i = 0; i < pizzas.length; i++) {
+        let pizza = pizzas[i]
+        let linha = table.insertRow(-1)
+        let cell1 = linha.insertCell(0)
+        let cell2 = linha.insertCell(1)
+        let cell3 = linha.insertCell(2)
+        cell1.innerHTML = pizza.nome
+        cell2.innerHTML = pizza.custo.toFixed(2)
+        let diferenca = (pizza.custo - menorCusto) / menorCusto * 100
+        cell3.innerHTML = diferenca.toFixed(2) + " %"
+
+        cell1.className = "cell"
+        cell2.className = "cell"
+        cell3.className = "cell"
+
+        if (pizza.custo === menorCusto) {
+          pizzasMenorCusto.push(pizza.nome)
+        }
+      }
+
+      document.getElementById("idOut").innerHTML = "A(s) pizza(s) de menor custo é(são): " + pizzasMenorCusto.join(", ")
+    }
+  </script>
+</body>
+
+</html>
